@@ -40,7 +40,7 @@ def is_valid_fernet_key(key_str):
     except Exception:
         return False
 
-@app.route('/encrypt_custom/<message>/<key>')
+@app.route('/encrypt_custom/<message>/<path:key>')
 def encrypt_custom(message, key):
     if not is_valid_fernet_key(key):
         return "Erreur : clé invalide. Elle doit être en base64, 32 octets.", 400
@@ -52,7 +52,7 @@ def encrypt_custom(message, key):
     except Exception as e:
         return f"Erreur lors du chiffrement : {str(e)}"
 
-@app.route('/decrypt_custom/<token>/<key>')
+@app.route('/decrypt_custom/<path:token>/<path:key>')
 def decrypt_custom(token, key):
     if not is_valid_fernet_key(key):
         return "Erreur : clé invalide. Elle doit être en base64, 32 octets.", 400
