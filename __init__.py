@@ -13,7 +13,7 @@ fernet = Fernet(key)
 
 @app.route('/')
 def home():
-    return "Bienvenue sur l'API CryptoPython !"
+    return render_template('hello.html') 
 
 # ----------- Exercice 1 : chiffrement / déchiffrement simple ----------- #
 
