@@ -8,25 +8,38 @@ import sqlite3
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world(): 
-    return render_template('hello.html')
+def home():
+    return "Bienvenue sur l'API de Cryptographie avec clés personnalisées !"
 
-key = Fernet.generate_key()
-f = Fernet(key)
+@app.route('/encrypt_custom')
+def encrypt_custom():
+    message = request.args.get('message')
+    user_key = request.args.get('key')
 
-@app.route('/encrypt/<string:valeur>')
-def encryptage(valeur):
-    valeur_bytes = valeur.encode()  # Conversion str -> bytes
-    token = f.encrypt(valeur_bytes)  # Encrypt la valeur
-    return f"Valeur encryptée : {token.decode()}"  # Retourne le token en str
+    if not message or not user_key:
+        return "Erreur : veuillez fournir un message ET une clé dans l'URL.", 400
 
-@app.route("/decrypt/<token>")
-def decrypt(token):
     try:
-        decrypted = f.decrypt(token.encode()).decode()  # Correction ici
-        return f"Texte déchiffré : {decrypted}"
+        fernet = Fernet(user_key.encode())
+        encrypted = fernet.encrypt(message.encode()).decode()
+        return f"Message chiffré : {encrypted}"
     except Exception as e:
-        return f"Erreur de déchiffrement : {str(e)}"
+        return f"Erreur lors du chiffrement : {str(e)}"
+
+@app.route('/decrypt_custom')
+def decrypt_custom():
+    token = request.args.get('token')
+    user_key = request.args.get('key')
+
+    if not token or not user_key:
+        return "Erreur : veuillez fournir un token ET une clé dans l'URL.", 400
+
+    try:
+        fernet = Fernet(user_key.encode())
+        decrypted = fernet.decrypt(token.encode()).decode()
+        return f"Message déchiffré : {decrypted}"
+    except Exception as e:
+        return f"Erreur lors du déchiffrement : {str(e)}"
 
 if __name__ == "__main__":
     app.run(debug=True)
