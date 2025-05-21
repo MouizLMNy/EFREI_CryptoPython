@@ -40,37 +40,25 @@ def is_valid_fernet_key(key_str):
     except Exception:
         return False
 
-@app.route('/encrypt_custom')
-def encrypt_custom():
-    message = request.args.get('message')
-    user_key = request.args.get('key')
-
-    if not message or not user_key:
-        return "Erreur : paramètres requis ?message=...&key=...", 400
-
-    if not is_valid_fernet_key(user_key):
-        return "Erreur : clé invalide. Elle doit être en base64 et 32 octets.", 400
+@app.route('/encrypt_custom/<message>/<key>')
+def encrypt_custom(message, key):
+    if not is_valid_fernet_key(key):
+        return "Erreur : clé invalide. Elle doit être en base64, 32 octets.", 400
 
     try:
-        user_fernet = Fernet(user_key.encode())
+        user_fernet = Fernet(key.encode())
         encrypted = user_fernet.encrypt(message.encode()).decode()
         return f"Message chiffré : {encrypted}"
     except Exception as e:
         return f"Erreur lors du chiffrement : {str(e)}"
 
-@app.route('/decrypt_custom')
-def decrypt_custom():
-    token = request.args.get('token')
-    user_key = request.args.get('key')
-
-    if not token or not user_key:
-        return "Erreur : paramètres requis ?token=...&key=...", 400
-
-    if not is_valid_fernet_key(user_key):
-        return "Erreur : clé invalide. Elle doit être en base64 et 32 octets.", 400
+@app.route('/decrypt_custom/<token>/<key>')
+def decrypt_custom(token, key):
+    if not is_valid_fernet_key(key):
+        return "Erreur : clé invalide. Elle doit être en base64, 32 octets.", 400
 
     try:
-        user_fernet = Fernet(user_key.encode())
+        user_fernet = Fernet(key.encode())
         decrypted = user_fernet.decrypt(token.encode()).decode()
         return f"Message déchiffré : {decrypted}"
     except Exception as e:
