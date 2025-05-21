@@ -34,8 +34,10 @@ def decrypt(token):
 # ----------- Exercice 2 : avec clé personnalisée ----------- #
 
 def is_valid_fernet_key(key_str):
+    import base64
     try:
-        decoded = base64.urlsafe_b64decode(key_str.encode())
+        padded = key_str + '=' * (-len(key_str) % 4)
+        decoded = base64.urlsafe_b64decode(padded.encode())
         return len(decoded) == 32
     except Exception:
         return False
@@ -46,7 +48,8 @@ def encrypt_custom(message, key):
         return "Erreur : clé invalide. Elle doit être en base64, 32 octets.", 400
 
     try:
-        user_fernet = Fernet(key.encode())
+        padded_key = key + '=' * (-len(key) % 4)
+        user_fernet = Fernet(padded_key.encode())
         encrypted = user_fernet.encrypt(message.encode()).decode()
         return f"Message chiffré : {encrypted}"
     except Exception as e:
@@ -58,7 +61,8 @@ def decrypt_custom(token, key):
         return "Erreur : clé invalide. Elle doit être en base64, 32 octets.", 400
 
     try:
-        user_fernet = Fernet(key.encode())
+        padded_key = key + '=' * (-len(key) % 4)
+        user_fernet = Fernet(padded_key.encode())
         decrypted = user_fernet.decrypt(token.encode()).decode()
         return f"Message déchiffré : {decrypted}"
     except Exception as e:
