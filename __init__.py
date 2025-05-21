@@ -4,9 +4,9 @@ from flask import render_template
 from flask import json
 from urllib.request import urlopen
 import sqlite3
-                                                                                                                                       
-app = Flask(__name__)                                                                                                                  
-                                                                                                                                       
+
+app = Flask(__name__)
+
 @app.route('/')
 def hello_world(): 
     return render_template('hello.html')
@@ -23,10 +23,11 @@ def encryptage(valeur):
 @app.route("/decrypt/<token>")
 def decrypt(token):
     try:
-        decrypted = fernet.decrypt(token.encode()).decode()
+        decrypted = f.decrypt(token.encode()).decode()  # Correction ici
         return f"Texte déchiffré : {decrypted}"
     except Exception as e:
         return f"Erreur de déchiffrement : {str(e)}"
-                                                                                                                                                     
+
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=True)
+
