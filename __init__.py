@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Bienvenue sur l'API de Cryptographie  avec clés personnalisées !"
+    return "Bienvenue sur l'API de Cryptographie  avec clés personnalisées ! \n voici le url pour crypte un msg "
     
    #EXO 1
 @app.route('/encrypt/<string:valeur>')
